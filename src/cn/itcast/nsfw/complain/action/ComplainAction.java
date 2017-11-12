@@ -2,12 +2,17 @@ package cn.itcast.nsfw.complain.action;
 
 import java.net.URLDecoder;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.struts2.ServletActionContext;
 
 import cn.itcast.core.action.BaseAction;
 import cn.itcast.core.util.QueryHelper;
@@ -27,6 +32,7 @@ public class ComplainAction extends BaseAction {
 	private ComplainReply reply;
 	private String strTitle;
 	private String strState;
+	private Map<String, Object> statisticMap;
 	
 	//列表
 	public String listUI(){
@@ -92,6 +98,29 @@ public class ComplainAction extends BaseAction {
 		}
 		return "list";
 	}
+	
+	//跳转到统计页面
+	public String annualStatisticChartUI(){
+		return "annualStatisticChartUI";
+	}
+	
+	//根据年度获取该年度下的统计数
+	public String getAnnualStatisticData(){
+		//1、获取年份
+		HttpServletRequest request = ServletActionContext.getRequest();
+		int year = 0;
+		if(request.getParameter("year") != null){
+			year = Integer.valueOf(request.getParameter("year"));
+		} else {
+			//默认 当前年份
+			year = Calendar.getInstance().get(Calendar.YEAR);
+		}
+		//2、获取统计年度的每个月的投诉数
+		statisticMap = new HashMap<String, Object>();
+		statisticMap.put("msg", "success");
+		statisticMap.put("chartData", complainService.getAnnualStatisticDataByYear(year));
+		return "annualStatisticData";
+	}
 
 	public Complain getComplain() {
 		return complain;
@@ -139,6 +168,10 @@ public class ComplainAction extends BaseAction {
 
 	public void setStrState(String strState) {
 		this.strState = strState;
+	}
+
+	public Map<String, Object> getStatisticMap() {
+		return statisticMap;
 	}
 
 }

@@ -18,6 +18,11 @@
   		document.forms[0].action = "${basePath}nsfw/complain_dealUI.action?complain.compId=" + compId;
   		document.forms[0].submit();
   	}
+  	//投诉统计
+  	function doAnnualStatistic(){
+  		document.forms[0].action = "${basePath}nsfw/complain_annualStatisticChartUI.action";
+  		document.forms[0].submit();
+  	}
     </script>
 </head>
 <body class="rightBody">
@@ -65,7 +70,9 @@
                                 <td align="center"><s:date name="compTime" format="yyyy-MM-dd HH:mm"/></td>
                                 <td align="center"><s:property value="#complainStateMap[state]"/></td>
                                 <td align="center">
+                                	<s:if test="state!=2">
                                     <a href="javascript:doDeal('<s:property value='compId'/>')">受理</a>
+                                    </s:if>
                                 </td>
                             </tr>
                         </s:iterator>
